@@ -32,15 +32,10 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
 
-//import android.support.v7.app.AppCompatActivity;
-
-//import org.jgrapht.*;
 
 
 import uk.co.senab.photoview.PhotoViewAttacher;
-//import org.junit.Test;
-//import static org.junit.Assert.assertNotNull;
-//import static org.junit.Assert.assertTrue;
+
 
 
 public class CameraActivity extends ActionBarActivity
@@ -206,8 +201,7 @@ public class CameraActivity extends ActionBarActivity
     @SuppressLint("NewApi")
     @Override
     public void recreate() {
-        if (Build.VERSION.SDK_INT >=
-                Build.VERSION_CODES.HONEYCOMB) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             super.recreate();
         } else {
             finish();
@@ -254,6 +248,10 @@ public class CameraActivity extends ActionBarActivity
             return true;
         }
         switch (item.getItemId()) {
+            case R.id.menu_stop:
+                mRecognitionFilterIndex = -1;
+                Log.d(TAG, "Stop clicked");
+                return true;
             case R.id.menu_sift:
                 mRecognitionFilterIndex = 0;
                 Log.d(TAG, "SIFT clicked");
