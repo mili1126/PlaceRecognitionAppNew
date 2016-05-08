@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.mili.placerecognitionapp.filters.Filter;
 import com.mili.placerecognitionapp.filters.RecognitionFilter;
@@ -308,6 +309,11 @@ public class CameraActivity extends ActionBarActivity
             Log.d(TAG, "check starts..." + mRecognitionFilterIndex);
             matchIndex = mRecognitionFilters[mRecognitionFilterIndex].apply(rgba, rgba);
             Log.d(TAG, "return match = " + matchIndex);
+            //draw circles on the map as current location
+//            PointF point = routePoint.get(matchIndex);
+//            mPaint.setColor(Color.RED);
+//            drawLocation(mCanvas, mPaint, point.x, point.y);
+            Toast.makeText(this, "Match locaiont" + matchIndex, Toast.LENGTH_LONG);
         }
 
         return rgba;
@@ -340,7 +346,7 @@ public class CameraActivity extends ActionBarActivity
     }
 
     private void drawLocation(Canvas canvas, Paint paint, float x, float y) {
-        canvas.drawCircle(x, y, 100f, paint);
+        canvas.drawCircle(x, y, 80f, paint);
 
     }
 }
