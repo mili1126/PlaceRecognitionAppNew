@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
@@ -309,11 +310,12 @@ public class CameraActivity extends ActionBarActivity
             Log.d(TAG, "check starts..." + mRecognitionFilterIndex);
             matchIndex = mRecognitionFilters[mRecognitionFilterIndex].apply(rgba, rgba);
             Log.d(TAG, "return match = " + matchIndex);
-            //draw circles on the map as current location
-//            PointF point = routePoint.get(matchIndex);
-//            mPaint.setColor(Color.RED);
-//            drawLocation(mCanvas, mPaint, point.x, point.y);
-            Toast.makeText(this, "Match locaiont" + matchIndex, Toast.LENGTH_LONG);
+            this.runOnUiThread(new Runnable() {
+                public void run() {
+                    updateLocation(matchIndex);
+                }
+            });
+
         }
 
         return rgba;
@@ -336,8 +338,8 @@ public class CameraActivity extends ActionBarActivity
                 point.x = Float.parseFloat(split[1]);
                 point.y = Float.parseFloat(split[2]);
                 routePoint.put(Integer.parseInt(split[0]), point);
-                mPaint.setColor(Color.BLUE);
-                drawLocation(mCanvas, mPaint, point.x, point.y); //draw circles on the map as office location
+//                mPaint.setColor(Color.BLUE);
+//                drawLocation(mCanvas, mPaint, point.x, point.y); //draw circles on the map as office location
             }
             br.close();
         } catch (IOException e) {
@@ -348,5 +350,18 @@ public class CameraActivity extends ActionBarActivity
     private void drawLocation(Canvas canvas, Paint paint, float x, float y) {
         canvas.drawCircle(x, y, 80f, paint);
 
+    }
+
+
+    private void updateLocation(int matchedIndex) {
+        if (matchedIndex != -1) {
+            Toast.makeText(getApplicationContext(), "Match location " + matchIndex, Toast.LENGTH_LONG).show();
+            //draw circles on the map as current location
+            PointF point = routePoint.get(matchIndex);
+            mCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
+            mCanvas.drawBitmap(imageBitmap, 0, 0, null);
+            mPaint.setColor(Color.RED);
+            drawLocation(mCanvas, mPaint, point.x, point.y);
+        }
     }
 }

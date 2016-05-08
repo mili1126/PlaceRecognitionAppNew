@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.PointF;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.mili.placerecognitionapp.MainActivity;
 import com.mili.placerecognitionapp.R;
@@ -198,6 +199,7 @@ public class RecognitionFilter implements Filter {
             }
 
         }
+
 
         return matchIndex;
     }
