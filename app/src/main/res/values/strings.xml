@@ -3,8 +3,8 @@
     <string name="welcome_message">Welcome!\nLet\'s start to recognize the place in BB280 area.</string>
     <string name="localization">Start localization...</string>
     <string name="menu_stop">Stop</string>
-    <string name="menu_sift">SIFT</string>
-    <string name="menu_surf">SURF</string>
+    <string name="menu_sift">BRISK</string>
+    <string name="menu_surf">FAST</string>
     <string name="menu_orb">ORB</string>
     <string name="menu_image_size">Size</string>
 

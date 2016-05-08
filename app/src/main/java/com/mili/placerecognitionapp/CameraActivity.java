@@ -39,6 +39,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 import uk.co.senab.photoview.PhotoViewAttacher;
@@ -160,7 +162,8 @@ public class CameraActivity extends ActionBarActivity
 
         //        mCameraView = new JavaCameraView(this, 0);
         mCameraView = (JavaCameraView) findViewById(R.id.camera_view);
-        mCameraView.setMaxFrameSize(size.width, size.height);
+//        mCameraView.setMaxFrameSize(size.width, size.height);
+        mCameraView.setMaxFrameSize(1280, 768);
         mCameraView.setCvCameraViewListener(this);
 
         mButton = (FloatingActionButton) findViewById(R.id.image_button);
@@ -186,6 +189,20 @@ public class CameraActivity extends ActionBarActivity
 
         //read all locations
         readLocation();
+
+        matchIndex = -1;
+        new Timer().scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateLocation(matchIndex);
+                    }
+                });
+
+            }
+        }, 0, 3000);//put here time 1000 milliseconds=1 second
     }
 
 
@@ -310,12 +327,6 @@ public class CameraActivity extends ActionBarActivity
             Log.d(TAG, "check starts..." + mRecognitionFilterIndex);
             matchIndex = mRecognitionFilters[mRecognitionFilterIndex].apply(rgba, rgba);
             Log.d(TAG, "return match = " + matchIndex);
-            this.runOnUiThread(new Runnable() {
-                public void run() {
-                    updateLocation(matchIndex);
-                }
-            });
-
         }
 
         return rgba;
@@ -355,12 +366,25 @@ public class CameraActivity extends ActionBarActivity
 
     private void updateLocation(int matchedIndex) {
         if (matchedIndex != -1) {
-            Toast.makeText(getApplicationContext(), "Match location " + matchIndex, Toast.LENGTH_LONG).show();
+//            Toast.makeText(getApplicationContext(), "Match location " + (matchedIndex+1), Toast.LENGTH_LONG).show();
+
+
+            Log.d(TAG, "Draw circle at place " + (matchedIndex+1));
+
             //draw circles on the map as current location
-            PointF point = routePoint.get(matchIndex);
-            mCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
+
+            // Set the Drawable displayed
+            imageDrawable = getResources().getDrawable(R.drawable.brown_280_floor_plan);
+
+            imageBitmap = ((BitmapDrawable) imageDrawable).getBitmap();
+            canvasBitmap = Bitmap.createBitmap(imageBitmap.getWidth(), imageBitmap.getHeight(), Bitmap.Config.RGB_565);
+            mCanvas = new Canvas(canvasBitmap);
+            mButton.setImageDrawable(new BitmapDrawable(getResources(), canvasBitmap));
             mCanvas.drawBitmap(imageBitmap, 0, 0, null);
+
+            mPaint = new Paint();
             mPaint.setColor(Color.RED);
+            PointF point = routePoint.get(matchIndex);
             drawLocation(mCanvas, mPaint, point.x, point.y);
         }
     }

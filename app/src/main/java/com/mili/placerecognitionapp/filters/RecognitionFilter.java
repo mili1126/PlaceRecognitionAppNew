@@ -99,13 +99,13 @@ public class RecognitionFilter implements Filter {
 
         if (mFeatureMode == 0) {
             //brisk
-            mFeatureDetector = FeatureDetector.create(FeatureDetector.ORB);
-            mDescriptorExtractor = DescriptorExtractor.create(DescriptorExtractor.ORB);
-            mDescriptorMatcher = DescriptorMatcher.create(DescriptorMatcher.BRUTEFORCE_HAMMINGLUT);
+            mFeatureDetector = FeatureDetector.create(FeatureDetector.BRISK);
+            mDescriptorExtractor = DescriptorExtractor.create(DescriptorExtractor.BRISK);
+            mDescriptorMatcher = DescriptorMatcher.create(DescriptorMatcher.BRUTEFORCE_L1);
 
         } else if (mFeatureMode == 1) {
             //fast
-            mFeatureDetector = FeatureDetector.create(FeatureDetector.ORB);
+            mFeatureDetector = FeatureDetector.create(FeatureDetector.FAST);
             mDescriptorExtractor = DescriptorExtractor.create(DescriptorExtractor.ORB);
             mDescriptorMatcher = DescriptorMatcher.create(DescriptorMatcher.BRUTEFORCE_HAMMINGLUT);
 
@@ -178,19 +178,21 @@ public class RecognitionFilter implements Filter {
             int goodNum = 0;
             double maxGoodMatchDist = 0.0;
             if (mFeatureMode == 0) {
-                maxGoodMatchDist = Math.max(maxDist/3.0, 2.0*minDist) ;
+                maxGoodMatchDist = Math.max(maxDist/2.0, 2.0*minDist) ;
             } else if (mFeatureMode == 1) {
                 maxGoodMatchDist = Math.max(maxDist/3.0, 2.0*minDist) ;
             } else if (mFeatureMode == 2) {
                 maxGoodMatchDist = Math.max(maxDist/2.0, 2.0*minDist) ;
             }
 
-
-            for (final DMatch match : matchesList) {
+            Log.d(TAG, "maxGoodMatchDist = " + maxGoodMatchDist);
+            for (DMatch match : matchesList) {
                 if (match.distance < maxGoodMatchDist) {
                     goodNum ++;
                 }
             }
+
+            Log.d(TAG, "Location " + i + " with goodNUm = " + goodNum);
 
 
             if ( goodNum > matchSize) {
