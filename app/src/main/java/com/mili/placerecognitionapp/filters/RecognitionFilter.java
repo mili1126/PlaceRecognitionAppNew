@@ -88,16 +88,16 @@ public class RecognitionFilter implements Filter {
 
 
     public RecognitionFilter( Context context, int featureMode) throws IOException {
-        // Load the reference orb descriptors
-        mAssets = context.getAssets();
-        String[] descriptorNames;
-        try {
-            descriptorNames = mAssets.list(DESCRIPTOR_FOLDERS.get(featureMode));
-            Log.i(TAG, "Found " + descriptorNames.length + " files");
-        } catch (IOException ioe) {
-            Log.e(TAG, "Could not list assets", ioe);
-            return;
-        }
+//        // Load the reference orb descriptors
+//        mAssets = context.getAssets();
+//        String[] descriptorNames;
+//        try {
+//            descriptorNames = mAssets.list(DESCRIPTOR_FOLDERS.get(featureMode));
+//            Log.i(TAG, "Found " + descriptorNames.length + " files");
+//        } catch (IOException ioe) {
+//            Log.e(TAG, "Could not list assets", ioe);
+//            return;
+//        }
 
         // Load the reference image from the app's resources.
         // It is loaded in BGR (blue, green, red) format.
@@ -142,8 +142,6 @@ public class RecognitionFilter implements Filter {
     public int apply(Mat src, Mat dst) {
         // Detect the scene features, compute their descriptors,
         // and match the scene descriptors to reference descriptors.
-//        Imgproc.cvtColor(src, src, Imgproc.COLOR_BGR2RGB);
-        // Try to create the photo.
         Imgproc.cvtColor(src, src, Imgproc.COLOR_RGBA2BGR, 3);
         mFeatureDetector.detect(src, mSceneKeypoints);
         mDescriptorExtractor.compute(src, mSceneKeypoints,

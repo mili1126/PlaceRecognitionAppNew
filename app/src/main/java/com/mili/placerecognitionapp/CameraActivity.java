@@ -180,7 +180,7 @@ public class CameraActivity extends ActionBarActivity
         mPaint = new Paint();
         mPaint.setColor(Color.RED);
         //testing draw circle
-        drawLocation(mCanvas, mPaint, 500.f, 1000.f);
+        //drawLocation(mCanvas, mPaint, 500.f, 1000.f);
 
         //read all locations
         readLocation();
