@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.PointF;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
 import android.os.Build;
@@ -28,10 +30,13 @@ import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
 
 
 import uk.co.senab.photoview.PhotoViewAttacher;
@@ -43,17 +48,18 @@ public class CameraActivity extends ActionBarActivity
     private static final String TAG = "CameraActivity";
 
     //    Graph g;
-    Canvas canvas;
-    Paint paint;
+    Canvas mCanvas;
+    Paint mPaint;
     Bitmap bitmape;
     Drawable bitmap;
     Bitmap tempBitmap;
-    private ImageView mImageView;
     private FloatingActionButton mButton;
     private PhotoViewAttacher mAttacher;
 
-
+    private Map<Integer, PointF> routePoint = new HashMap<Integer, PointF>();
     private int matchIndex;
+
+
 
 
     // Keys for storing.
@@ -165,6 +171,16 @@ public class CameraActivity extends ActionBarActivity
         mAttacher = new PhotoViewAttacher(mButton);
         mButton.setTranslationY(-100);
 
+        // Set the Drawable displayed
+        bitmap = getResources().getDrawable(R.drawable.brown_280_floor_plan);
+        mButton.setImageDrawable(bitmap);
+        bitmape = ((BitmapDrawable) bitmap).getBitmap();
+        tempBitmap = Bitmap.createBitmap(bitmape.getWidth(), bitmape.getHeight(), Bitmap.Config.RGB_565);
+        mCanvas = new Canvas(tempBitmap);
+//        mCanvas.drawBitmap(bitmape, 0, 0, null);
+//        mPaint = new Paint();
+//        mPaint.setColor(Color.RED);
+//        mPaint.setStrokeWidth(10.0f);
 
     }
 
@@ -295,4 +311,34 @@ public class CameraActivity extends ActionBarActivity
         return rgba;
     }
 
+    @SuppressLint("NewApi")
+    public void readLocation() {
+        //read office digit number and office x,y coordinate from txt file
+        //split[0]: office digit number
+        //split[1]: office x coordinate in float
+        //split[2]: office y coordinate in float
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(getAssets().open("location.txt"), "UTF-8"))) {
+            String line;
+            String[] split;
+
+            while ((line = br.readLine()) != null) {
+                // process the line.
+                split = line.split("\\s+");
+                PointF point = new PointF();
+                point.x = Float.parseFloat(split[1]);
+                point.y = Float.parseFloat(split[2]);
+                routePoint.put(Integer.parseInt(split[0]), point);
+                //                mPaint.setColor(Color.BLUE);
+                // room_loc_draw(canvas, paint, point.x, point.y); //draw circles on the map as office location
+            }
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void room_loc_draw(Canvas canvas, Paint paint, float x, float y) {
+        canvas.drawCircle(x, y, 50f, paint);
+
+    }
 }
