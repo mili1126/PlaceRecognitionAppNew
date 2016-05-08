@@ -3,6 +3,7 @@ package com.mili.placerecognitionapp;
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.drawable.BitmapDrawable;
@@ -18,7 +19,6 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ImageView;
 
 import com.mili.placerecognitionapp.filters.Filter;
 import com.mili.placerecognitionapp.filters.RecognitionFilter;
@@ -42,24 +42,21 @@ import java.util.Map;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
 
-
 public class CameraActivity extends ActionBarActivity
         implements CameraBridgeViewBase.CvCameraViewListener2 {
     private static final String TAG = "CameraActivity";
 
-    //    Graph g;
+
     Canvas mCanvas;
     Paint mPaint;
-    Bitmap bitmape;
-    Drawable bitmap;
-    Bitmap tempBitmap;
+    Drawable imageDrawable;
+    Bitmap imageBitmap;
+    Bitmap canvasBitmap;
     private FloatingActionButton mButton;
     private PhotoViewAttacher mAttacher;
 
     private Map<Integer, PointF> routePoint = new HashMap<Integer, PointF>();
     private int matchIndex;
-
-
 
 
     // Keys for storing.
@@ -80,7 +77,7 @@ public class CameraActivity extends ActionBarActivity
     // The image sizes supported by the active camera.
     private List<Camera.Size> mSupportedImageSizes;
     // The index of the active image size.
-    private int mImageSizeIndex ;
+    private int mImageSizeIndex;
 
     // Whether an asynchronous menu action is in progress.
     // If so, menu interaction should be disabled.
@@ -168,20 +165,25 @@ public class CameraActivity extends ActionBarActivity
         mButton.setUseCompatPadding(false);
         mButton.setCompatElevation(.1f);
         mButton.setBackgroundTintMode(null);
-        mAttacher = new PhotoViewAttacher(mButton);
         mButton.setTranslationY(-100);
+        mAttacher = new PhotoViewAttacher(mButton);
 
         // Set the Drawable displayed
-        bitmap = getResources().getDrawable(R.drawable.brown_280_floor_plan);
-        mButton.setImageDrawable(bitmap);
-        bitmape = ((BitmapDrawable) bitmap).getBitmap();
-        tempBitmap = Bitmap.createBitmap(bitmape.getWidth(), bitmape.getHeight(), Bitmap.Config.RGB_565);
-        mCanvas = new Canvas(tempBitmap);
-//        mCanvas.drawBitmap(bitmape, 0, 0, null);
-//        mPaint = new Paint();
-//        mPaint.setColor(Color.RED);
-//        mPaint.setStrokeWidth(10.0f);
+        imageDrawable = getResources().getDrawable(R.drawable.brown_280_floor_plan);
 
+        imageBitmap = ((BitmapDrawable) imageDrawable).getBitmap();
+        canvasBitmap = Bitmap.createBitmap(imageBitmap.getWidth(), imageBitmap.getHeight(), Bitmap.Config.RGB_565);
+        mCanvas = new Canvas(canvasBitmap);
+        mButton.setImageDrawable(new BitmapDrawable(getResources(), canvasBitmap));
+        mCanvas.drawBitmap(imageBitmap, 0, 0, null);
+
+        mPaint = new Paint();
+        mPaint.setColor(Color.RED);
+        //testing draw circle
+        drawLocation(mCanvas, mPaint, 500.f, 1000.f);
+
+        //read all locations
+        readLocation();
     }
 
 
@@ -328,8 +330,8 @@ public class CameraActivity extends ActionBarActivity
                 point.x = Float.parseFloat(split[1]);
                 point.y = Float.parseFloat(split[2]);
                 routePoint.put(Integer.parseInt(split[0]), point);
-                //                mPaint.setColor(Color.BLUE);
-                // room_loc_draw(canvas, paint, point.x, point.y); //draw circles on the map as office location
+                mPaint.setColor(Color.BLUE);
+                drawLocation(mCanvas, mPaint, point.x, point.y); //draw circles on the map as office location
             }
             br.close();
         } catch (IOException e) {
@@ -337,8 +339,8 @@ public class CameraActivity extends ActionBarActivity
         }
     }
 
-    private void room_loc_draw(Canvas canvas, Paint paint, float x, float y) {
-        canvas.drawCircle(x, y, 50f, paint);
+    private void drawLocation(Canvas canvas, Paint paint, float x, float y) {
+        canvas.drawCircle(x, y, 100f, paint);
 
     }
 }
